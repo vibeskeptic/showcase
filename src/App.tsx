@@ -40,7 +40,7 @@ export default function App() {
             </Group>
             <Text c="dimmed" size="lg">
               Open-source projects by{' '}
-              <Anchor href="https://github.com/vibe-skeptic" target="_blank" rel="noopener noreferrer">
+              <Anchor href="https://github.com/vibeskeptic" target="_blank" rel="noopener noreferrer">
                 @vibe-skeptic
               </Anchor>
             </Text>

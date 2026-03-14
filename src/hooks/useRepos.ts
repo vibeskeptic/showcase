@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { Repo } from '../types'
 
-const USER = 'vibe-skeptic'
+const USER = 'vibeskeptic'
 const API_URL = `https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`
 
 interface UseReposResult {
