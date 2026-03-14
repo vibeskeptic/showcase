@@ -41,7 +41,7 @@ export default function App() {
             <Text c="dimmed" size="lg">
               Open-source projects by{' '}
               <Anchor href="https://github.com/vibeskeptic" target="_blank" rel="noopener noreferrer">
-                @vibe-skeptic
+                @vibeskeptic
               </Anchor>
             </Text>
           </Stack>
