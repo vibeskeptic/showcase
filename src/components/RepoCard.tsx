@@ -14,6 +14,7 @@ import {
   IconAlertCircle,
   IconExternalLink,
   IconBrandGithub,
+  IconNews,
 } from '@tabler/icons-react'
 import type { Repo } from '../types'
 
@@ -34,8 +35,14 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Shell: 'gray',
 }
 
+const SUBSTACK_PREFIX = 'substack-'
+const SUBSTACK_BASE = 'https://vibeskeptic.substack.com/p/'
+
 export function RepoCard({ repo }: RepoCardProps) {
   const langColor = repo.language ? (LANGUAGE_COLORS[repo.language] ?? 'gray') : undefined
+  const substackSlug = repo.topics.find((t) => t.startsWith(SUBSTACK_PREFIX))?.slice(SUBSTACK_PREFIX.length)
+  const substackUrl = substackSlug ? `${SUBSTACK_BASE}${substackSlug}` : null
+  const visibleTopics = repo.topics.filter((t) => !t.startsWith(SUBSTACK_PREFIX))
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder h="100%" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -45,6 +52,21 @@ export function RepoCard({ repo }: RepoCardProps) {
             {repo.name}
           </Title>
           <Group gap={4} wrap="nowrap">
+            {substackUrl && (
+              <Tooltip label="Read on Substack">
+                <ActionIcon
+                  component="a"
+                  href={substackUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  variant="subtle"
+                  color="orange"
+                  aria-label="Substack article"
+                >
+                  <IconNews size={16} />
+                </ActionIcon>
+              </Tooltip>
+            )}
             {repo.homepage && (
               <Tooltip label="Visit homepage">
                 <ActionIcon
@@ -80,9 +102,9 @@ export function RepoCard({ repo }: RepoCardProps) {
           {repo.description ?? 'No description provided.'}
         </Text>
 
-        {repo.topics.length > 0 && (
+        {visibleTopics.length > 0 && (
           <Group gap={4}>
-            {repo.topics.slice(0, 5).map((topic) => (
+            {visibleTopics.slice(0, 5).map((topic) => (
               <Badge key={topic} size="xs" variant="light" color="blue">
                 {topic}
               </Badge>
