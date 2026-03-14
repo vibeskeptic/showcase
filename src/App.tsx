@@ -10,8 +10,11 @@ import {
   Anchor,
   TextInput,
   Center,
+  ActionIcon,
+  useMantineColorScheme,
+  useComputedColorScheme,
 } from '@mantine/core'
-import { IconAlertCircle, IconBrandGithub, IconSearch } from '@tabler/icons-react'
+import { IconAlertCircle, IconBrandGithub, IconSearch, IconSun, IconMoon } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useRepos } from './hooks/useRepos'
 import { RepoCard } from './components/RepoCard'
@@ -19,6 +22,9 @@ import { RepoCard } from './components/RepoCard'
 export default function App() {
   const { repos, loading, error } = useRepos()
   const [query, setQuery] = useState('')
+  const { setColorScheme } = useMantineColorScheme()
+  const computed = useComputedColorScheme('light')
+  const isDark = computed === 'dark'
 
   const filtered = repos.filter((r) => {
     const q = query.toLowerCase()
@@ -34,9 +40,19 @@ export default function App() {
       <Container size="xl" py="xl">
         <Stack gap="xl">
           <Stack gap="xs">
-            <Group gap="sm" align="center">
-              <IconBrandGithub size={32} />
-              <Title order={1}>Vibe Skeptic</Title>
+            <Group gap="sm" align="center" justify="space-between">
+              <Group gap="sm" align="center">
+                <IconBrandGithub size={32} />
+                <Title order={1}>Vibe Skeptic</Title>
+              </Group>
+              <ActionIcon
+                variant="subtle"
+                size="lg"
+                aria-label="Toggle color scheme"
+                onClick={() => setColorScheme(isDark ? 'light' : 'dark')}
+              >
+                {isDark ? <IconSun size={20} /> : <IconMoon size={20} />}
+              </ActionIcon>
             </Group>
             <Text c="dimmed" size="lg">
               Open-source projects by{' '}
