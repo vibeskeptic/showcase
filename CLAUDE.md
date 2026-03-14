@@ -25,9 +25,11 @@ When setting up the project set it up with the following commands:
 ## Best Practices
 
 ### README.md
+
 Create and maintain the README as the project is being developed.
 
 ### Git
+
 Before making a commit, make sure the project builds without error and all tests are passing.
 
 At the end of every prompt, create a commit with the following commit message structure:
