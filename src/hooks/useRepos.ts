@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import type { Repo } from '../types'
 
-const ORG = 'vibe-skeptic'
-const API_URL = `https://api.github.com/orgs/${ORG}/repos?per_page=100&sort=updated`
+const USER = 'vibe-skeptic'
+const API_URL = `https://api.github.com/users/${USER}/repos?per_page=100&sort=updated`
 
 interface UseReposResult {
   repos: Repo[]
