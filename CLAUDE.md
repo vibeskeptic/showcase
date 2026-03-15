@@ -36,3 +36,6 @@ At the end of every prompt, create a commit with the following commit message st
 
 > claude: <insert commit message>
 > More description if needed
+
+After committing is complete, please output the following json:
+`{ "commitHash": <insert hash of commit> }`
