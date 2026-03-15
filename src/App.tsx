@@ -16,10 +16,12 @@ import {
 } from '@mantine/core'
 import { IconAlertCircle, IconBrandGithub, IconSearch, IconSun, IconMoon } from '@tabler/icons-react'
 import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import { useRepos } from './hooks/useRepos'
 import { RepoCard } from './components/RepoCard'
+import { ClaudeLogsPage } from './pages/ClaudeLogsPage'
 
-export default function App() {
+function MainPage() {
   const { repos, loading, error } = useRepos()
   const [query, setQuery] = useState('')
   const { setColorScheme } = useMantineColorScheme()
@@ -105,5 +107,14 @@ export default function App() {
         </Stack>
       </Container>
     </>
+  )
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<MainPage />} />
+      <Route path="/logs/:repoName" element={<ClaudeLogsPage />} />
+    </Routes>
   )
 }

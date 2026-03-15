@@ -15,7 +15,9 @@ import {
   IconExternalLink,
   IconBrandGithub,
   IconNews,
+  IconTerminal2,
 } from '@tabler/icons-react'
+import { Link } from 'react-router-dom'
 import type { Repo } from '../types'
 
 interface RepoCardProps {
@@ -37,12 +39,14 @@ const LANGUAGE_COLORS: Record<string, string> = {
 
 const SUBSTACK_PREFIX = 'substack-'
 const SUBSTACK_BASE = 'https://vibeskeptic.substack.com/p/'
+const CLAUDE_LOGS_TOPIC = 'claude-logs'
 
 export function RepoCard({ repo }: RepoCardProps) {
   const langColor = repo.language ? (LANGUAGE_COLORS[repo.language] ?? 'gray') : undefined
   const substackSlug = repo.topics.find((t) => t.startsWith(SUBSTACK_PREFIX))?.slice(SUBSTACK_PREFIX.length)
   const substackUrl = substackSlug ? `${SUBSTACK_BASE}${substackSlug}` : null
-  const visibleTopics = repo.topics.filter((t) => !t.startsWith(SUBSTACK_PREFIX))
+  const hasClaudeLogs = repo.topics.includes(CLAUDE_LOGS_TOPIC)
+  const visibleTopics = repo.topics.filter((t) => !t.startsWith(SUBSTACK_PREFIX) && t !== CLAUDE_LOGS_TOPIC)
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder h="100%" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -52,6 +56,19 @@ export function RepoCard({ repo }: RepoCardProps) {
             {repo.name}
           </Title>
           <Group gap={4} wrap="nowrap">
+            {hasClaudeLogs && (
+              <Tooltip label="View Claude Logs">
+                <ActionIcon
+                  component={Link}
+                  to={`/logs/${repo.name}`}
+                  variant="subtle"
+                  color="violet"
+                  aria-label="Claude Logs"
+                >
+                  <IconTerminal2 size={16} />
+                </ActionIcon>
+              </Tooltip>
+            )}
             {substackUrl && (
               <Tooltip label="Read on Substack">
                 <ActionIcon

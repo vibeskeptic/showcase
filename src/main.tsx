@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { HashRouter } from 'react-router-dom'
 import '@mantine/core/styles.css'
 import { ColorSchemeScript, MantineProvider } from '@mantine/core'
 import App from './App'
@@ -9,7 +10,9 @@ createRoot(root).render(
   <StrictMode>
     <ColorSchemeScript defaultColorScheme="auto" />
     <MantineProvider defaultColorScheme="auto">
-      <App />
+      <HashRouter>
+        <App />
+      </HashRouter>
     </MantineProvider>
   </StrictMode>,
 )
