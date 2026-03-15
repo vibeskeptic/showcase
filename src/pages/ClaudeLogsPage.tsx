@@ -15,10 +15,12 @@ import {
   Code,
   Anchor,
 } from '@mantine/core'
-import { IconAlertCircle, IconArrowLeft, IconRobot, IconUser, IconTool } from '@tabler/icons-react'
+import { IconAlertCircle, IconArrowLeft, IconRobot, IconUser, IconTool, IconGitCommit } from '@tabler/icons-react'
 import { useState, useMemo } from 'react'
 import { useLogIndex, useLogEntries, summarizeTool } from '../hooks/useClaudeLogs'
 import type { DisplayEntry } from '../types'
+
+const COMMIT_HASH_RE = /^\s*`\{\s*"commitHash"\s*:\s*"([a-f0-9]+)"\s*\}`\s*/
 
 function UserBubble({ entry }: { entry: Extract<DisplayEntry, { kind: 'user' }> }) {
   return (
@@ -41,7 +43,11 @@ function UserBubble({ entry }: { entry: Extract<DisplayEntry, { kind: 'user' }> 
   )
 }
 
-function AssistantBubble({ entry }: { entry: Extract<DisplayEntry, { kind: 'assistant' }> }) {
+function AssistantBubble({ entry, repoName }: { entry: Extract<DisplayEntry, { kind: 'assistant' }>; repoName: string }) {
+  const match = COMMIT_HASH_RE.exec(entry.text)
+  const commitHash = match?.[1] ?? null
+  const bodyText = commitHash ? entry.text.slice(match![0].length) : entry.text
+
   return (
     <Group justify="flex-start">
       <Paper
@@ -51,12 +57,28 @@ function AssistantBubble({ entry }: { entry: Extract<DisplayEntry, { kind: 'assi
         withBorder
         style={{ maxWidth: '75%' }}
       >
-        <Group gap="xs" align="flex-start" wrap="nowrap">
-          <IconRobot size={16} style={{ flexShrink: 0, marginTop: 2, color: 'var(--mantine-color-violet-6)' }} />
+        <Stack gap={4}>
+          <Group justify="space-between" align="center" gap="xs">
+            <IconRobot size={16} style={{ color: 'var(--mantine-color-violet-6)' }} />
+            {commitHash && (
+              <Anchor
+                href={`https://github.com/vibeskeptic/${repoName}/commit/${commitHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                size="xs"
+                c="dimmed"
+              >
+                <Group gap={4} align="center">
+                  <IconGitCommit size={12} />
+                  {commitHash.slice(0, 7)}
+                </Group>
+              </Anchor>
+            )}
+          </Group>
           <Text size="sm" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-            {entry.text}
+            {bodyText}
           </Text>
-        </Group>
+        </Stack>
       </Paper>
     </Group>
   )
@@ -86,6 +108,7 @@ function ToolBubble({ entry }: { entry: Extract<DisplayEntry, { kind: 'tool' }> 
 function LogViewer({ repoName, file }: { repoName: string; file: string }) {
   const { entries, loading, error } = useLogEntries(repoName, file)
 
+
   if (loading) {
     return (
       <Center py="xl">
@@ -114,7 +137,7 @@ function LogViewer({ repoName, file }: { repoName: string; file: string }) {
     <Stack gap="xs" py="md">
       {entries.map((entry, i) => {
         if (entry.kind === 'user') return <UserBubble key={i} entry={entry} />
-        if (entry.kind === 'assistant') return <AssistantBubble key={i} entry={entry} />
+        if (entry.kind === 'assistant') return <AssistantBubble key={i} entry={entry} repoName={repoName} />
         if (entry.kind === 'tool') return <ToolBubble key={i} entry={entry} />
         return null
       })}
