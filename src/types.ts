@@ -35,6 +35,7 @@ export interface RawLogEntry {
   isSidechain?: boolean
   message?: {
     id?: string
+    model?: string
     role: 'user' | 'assistant'
     content: string | ContentBlock[]
     stop_reason?: string | null
@@ -44,5 +45,5 @@ export interface RawLogEntry {
 
 export type DisplayEntry =
   | { kind: 'user'; text: string; timestamp: string }
-  | { kind: 'assistant'; text: string; timestamp: string }
+  | { kind: 'assistant'; text: string; timestamp: string; model?: string }
   | { kind: 'tool'; toolName: string; input: Record<string, unknown>; timestamp: string }

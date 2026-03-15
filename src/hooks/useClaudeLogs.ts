@@ -62,7 +62,7 @@ function parseEntries(text: string): DisplayEntry[] {
     }
 
     if (entry.type === 'assistant' && entry.message) {
-      const { id, content, stop_reason } = entry.message
+      const { id, model, content, stop_reason } = entry.message
       // Only process the final version of each message (not streaming chunks)
       if (stop_reason === null) continue
       if (id && seenMessageIds.has(id)) continue
@@ -71,7 +71,7 @@ function parseEntries(text: string): DisplayEntry[] {
       if (Array.isArray(content)) {
         for (const block of content as ContentBlock[]) {
           if (block.type === 'text' && block.text.trim()) {
-            display.push({ kind: 'assistant', text: block.text, timestamp: ts })
+            display.push({ kind: 'assistant', text: block.text, timestamp: ts, model })
           } else if (block.type === 'tool_use') {
             display.push({
               kind: 'tool',

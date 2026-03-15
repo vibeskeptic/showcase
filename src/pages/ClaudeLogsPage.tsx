@@ -129,7 +129,14 @@ function AssistantBubble({ entry, repoName }: { entry: Extract<DisplayEntry, { k
       >
         <Stack gap={4}>
           <Group justify="space-between" align="center" gap="xs">
-            <IconRobot size={16} style={{ color: 'var(--mantine-color-violet-6)' }} />
+            <Group gap={4} align="center">
+              <IconRobot size={16} style={{ color: 'var(--mantine-color-violet-6)' }} />
+              {entry.model && (
+                <Text size="xs" c="dimmed" style={{ fontFamily: 'monospace' }}>
+                  {entry.model}
+                </Text>
+              )}
+            </Group>
             {commitHash && (
               <Anchor
                 href={`https://github.com/vibeskeptic/${repoName}/commit/${commitHash}`}
