@@ -1,6 +1,6 @@
 {
   "Initial Build": {
     "order": 0,
-    "file": "bootstrap.jsonl"
+    "file": "log_init.jsonl"
   }
 }
