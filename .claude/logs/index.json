@@ -2,5 +2,9 @@
   "Initial Build": {
     "order": 0,
     "file": "log_init.jsonl"
+  },
+  "Log Viewer": {
+    "order": 1,
+    "file": "log_log-viewer.jsonl"
   }
 }
