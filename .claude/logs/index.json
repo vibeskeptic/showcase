@@ -6,5 +6,9 @@
   "Log Viewer": {
     "order": 1,
     "file": "log_log-viewer.jsonl"
+  },
+  "Log Viewer Model Name": {
+    "order": 2,
+    "file": "log_model-name.jsonl"
   }
 }
