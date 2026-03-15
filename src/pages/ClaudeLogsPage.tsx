@@ -17,10 +17,78 @@ import {
 } from '@mantine/core'
 import { IconAlertCircle, IconArrowLeft, IconRobot, IconUser, IconTool, IconGitCommit } from '@tabler/icons-react'
 import { useState, useMemo } from 'react'
+import ReactMarkdown from 'react-markdown'
+import type { Components } from 'react-markdown'
 import { useLogIndex, useLogEntries, summarizeTool } from '../hooks/useClaudeLogs'
 import type { DisplayEntry } from '../types'
 
 const COMMIT_HASH_RE = /^\s*`\{\s*"commitHash"\s*:\s*"([a-f0-9]+)"\s*\}`\s*/
+
+function makeComponents(invert: boolean): Components {
+  const color = invert ? 'white' : undefined
+  const dimColor = invert ? 'rgba(255,255,255,0.75)' : undefined
+
+  return {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    p: ({ node: _node, ...props }) => (
+      <Text size="sm" mb={4} style={{ color, wordBreak: 'break-word' }} {...props} />
+    ),
+    h1: ({ node: _node, ...props }) => <Title order={3} mb={4} style={{ color }} {...props} />,
+    h2: ({ node: _node, ...props }) => <Title order={4} mb={4} style={{ color }} {...props} />,
+    h3: ({ node: _node, ...props }) => <Title order={5} mb={4} style={{ color }} {...props} />,
+    h4: ({ node: _node, ...props }) => <Title order={6} mb={4} style={{ color }} {...props} />,
+    h5: ({ node: _node, ...props }) => <Title order={6} mb={4} style={{ color }} {...props} />,
+    h6: ({ node: _node, ...props }) => <Title order={6} mb={4} style={{ color }} {...props} />,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    code: ({ node: _node, className, children }) => {
+      const isBlock = className?.startsWith('language-')
+      return isBlock ? (
+        <Code block style={{ fontSize: 12, marginBottom: 4 }}>
+          {children}
+        </Code>
+      ) : (
+        <Code style={{ fontSize: 12, color: invert ? 'white' : undefined, background: invert ? 'rgba(0,0,0,0.2)' : undefined }}>
+          {children}
+        </Code>
+      )
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    pre: ({ node: _node, children }) => <>{children}</>,
+    a: ({ node: _node, href, children, ...props }: React.ComponentPropsWithoutRef<'a'> & { node?: unknown }) => (
+      <Anchor href={href} target="_blank" rel="noopener noreferrer" size="sm" style={{ color: invert ? 'white' : undefined, textDecorationColor: invert ? 'rgba(255,255,255,0.6)' : undefined }} {...props}>
+        {children}
+      </Anchor>
+    ),
+    ul: ({ node: _node, ...props }) => (
+      <ul style={{ paddingLeft: 20, marginTop: 4, marginBottom: 4, color }} {...props} />
+    ),
+    ol: ({ node: _node, ...props }) => (
+      <ol style={{ paddingLeft: 20, marginTop: 4, marginBottom: 4, color }} {...props} />
+    ),
+    li: ({ node: _node, ...props }) => (
+      <li style={{ fontSize: 14, marginBottom: 2, color }} {...props} />
+    ),
+    blockquote: ({ node: _node, ...props }) => (
+      <blockquote
+        style={{
+          borderLeft: `3px solid ${invert ? 'rgba(255,255,255,0.4)' : 'var(--mantine-color-gray-4)'}`,
+          paddingLeft: 12,
+          margin: '4px 0',
+          color: dimColor ?? 'var(--mantine-color-dimmed)',
+        }}
+        {...props}
+      />
+    ),
+    hr: ({ node: _node }) => (
+      <hr style={{ border: 'none', borderTop: `1px solid ${invert ? 'rgba(255,255,255,0.3)' : 'var(--mantine-color-gray-3)'}`, margin: '8px 0' }} />
+    ),
+    strong: ({ node: _node, ...props }) => <strong style={{ color }} {...props} />,
+    em: ({ node: _node, ...props }) => <em style={{ color }} {...props} />,
+  }
+}
+
+const ASSISTANT_COMPONENTS = makeComponents(false)
+const USER_COMPONENTS = makeComponents(true)
 
 function UserBubble({ entry }: { entry: Extract<DisplayEntry, { kind: 'user' }> }) {
   return (
@@ -34,9 +102,11 @@ function UserBubble({ entry }: { entry: Extract<DisplayEntry, { kind: 'user' }> 
       >
         <Group gap="xs" align="flex-start" wrap="nowrap">
           <IconUser size={16} color="white" style={{ flexShrink: 0, marginTop: 2 }} />
-          <Text size="sm" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: 'white' }}>
-            {entry.text}
-          </Text>
+          <div style={{ minWidth: 0 }}>
+            <ReactMarkdown skipHtml components={USER_COMPONENTS}>
+              {entry.text}
+            </ReactMarkdown>
+          </div>
         </Group>
       </Paper>
     </Group>
@@ -75,9 +145,9 @@ function AssistantBubble({ entry, repoName }: { entry: Extract<DisplayEntry, { k
               </Anchor>
             )}
           </Group>
-          <Text size="sm" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+          <ReactMarkdown skipHtml components={ASSISTANT_COMPONENTS}>
             {bodyText}
-          </Text>
+          </ReactMarkdown>
         </Stack>
       </Paper>
     </Group>
